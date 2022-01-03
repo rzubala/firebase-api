@@ -1,5 +1,5 @@
 import {Express} from 'express'
-import { helloWorld, buildCrudService } from './firebase';
+import { helloWorld, buildCrudService } from './firebase-functions';
 
 export default (app: Express, db: FirebaseFirestore.Firestore) => {
     const service = buildCrudService(db)
