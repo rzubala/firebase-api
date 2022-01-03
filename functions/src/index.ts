@@ -11,6 +11,7 @@ import * as admin from "firebase-admin";
 import express from "express";
 import cors from "cors";
 import * as serviceAccount from "../permissions.json";
+import routes from './routes'
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
@@ -21,94 +22,26 @@ const db = admin.firestore();
 const app = express();
 app.use(cors({origin: true}));
 
-app.get("/hello-world", (req, res) => {
-  return res.status(200).send("Hello World!");
-});
+routes(app, db)
 
-app.post("/api/create", (req, res) => {
-  (async () => {
-    try {
-      functions.logger.info("Create: " + req.body, {structuredData: true});
-      await db
-          .collection("items")
-          .doc("/" + req.body.id + "/")
-          .create({item: req.body.item});
-      return res.status(200).send();
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-  })();
-});
-
-// read item
-app.get("/api/read/:item_id", (req, res) => {
-  (async () => {
-    try {
-      const document = db.collection("items").doc(req.params.item_id);
-      const item = await document.get();
-      const response = item.data();
-      return res.status(200).send(response);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-  })();
-});
-
-// read all
-app.get("/api/read", (req, res) => {
-  (async () => {
-    try {
-      const query = db.collection("items");
-      const response: any[] = [];
-      await query.get().then((querySnapshot) => {
-        const docs = querySnapshot.docs;
-        for (const doc of docs) {
-          const selectedItem = {
-            id: doc.id,
-            item: doc.data().item,
-          };
-          response.push(selectedItem);
-        }
-      });
-      return res.status(200).send(response);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-  })();
-});
-
-// update
-app.put("/api/update/:item_id", (req, res) => {
-  (async () => {
-    try {
-      const document = db.collection("items").doc(req.params.item_id);
-      await document.update({
-        item: req.body.item,
-      });
-      return res.status(200).send();
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-  })();
-});
-
-// delete
-app.delete("/api/deconste/:item_id", (req, res) => {
-  (async () => {
-    try {
-      const document = db.collection("items").doc(req.params.item_id);
-      await document.delete();
-      return res.status(200).send();
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-  })();
-});
-
-// export const helloWorld = functions.https.onRequest(app);
 exports.app = functions.https.onRequest(app);
+
+// Listens for new messages added to /items/:itemId/item and creates an
+// uppercase version of the message to /items/:itemId/uppercase
+exports.makeUppercase = functions.firestore.document("/items/{itemId}")
+    .onCreate((snap, context) => {
+      // Grab the current value of what was written to Firestore.
+      const original = snap.data().item;
+
+      // Access the parameter `{itemId}` with `context.params`
+      functions.logger.log('Uppercasing', context.params.itemId, original);
+      
+      const uppercase = original.toUpperCase();
+
+      console.log("upper case", original, uppercase, context.params.itemId)
+      
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to Firestore.
+      // Setting an 'uppercase' field in Firestore document returns a Promise.
+      return snap.ref.set({uppercase}, {merge: true});
+    });
