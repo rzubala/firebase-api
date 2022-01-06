@@ -119,6 +119,12 @@ const runFunctions = async (db: FirebaseFirestore.Firestore) => {
     const cityRef = await citiesRef.doc("SF").get()
     const citiesStartAtSF = await citiesRef.orderBy("population").startAt(cityRef).get()
     logData("start at SF", citiesStartAtSF, city => city.data().name + ": " + city.data().population)
+
+    const greatesCities = await citiesRef.orderBy("population").limit(3).get();
+    const last = greatesCities.docs[greatesCities.docs.length - 1]
+
+    const getNextGreatestCitites = await citiesRef.orderBy("population").startAfter(last.data().population).get()
+    logData("start after last", getNextGreatestCitites, city => city.data().name + ": " + city.data().population)
   };
 
   (async () => {
