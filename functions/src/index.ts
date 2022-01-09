@@ -8,7 +8,6 @@ import cors from "cors";
 import * as serviceAccount from "../permissions.json";
 import routes from './routes'
 const firestoreFunctions = require('./firestore-functions')
-import runFunctions from './firestore-index'
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
@@ -20,8 +19,6 @@ const app = express();
 app.use(cors({origin: true}));
 
 routes(app, db)
-
-runFunctions(db)
 
 exports.app = functions.https.onRequest(app);
 

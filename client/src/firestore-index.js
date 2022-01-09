@@ -1,4 +1,4 @@
-const runFunctions = async (db: FirebaseFirestore.Firestore) => {
+const runFunctions = async (db) => {
   const simpleQueries = async () => {
     const citiesRef = db.collection("cities");
 
@@ -135,7 +135,7 @@ const runFunctions = async (db: FirebaseFirestore.Firestore) => {
       state: "CA",
       country: "USA",
       capital: false,
-      population: 860000,
+      population: 860002,
       regions: ["west_coast", "norcal"],
     });
     await citiesRef.doc("LA").set({
@@ -143,7 +143,7 @@ const runFunctions = async (db: FirebaseFirestore.Firestore) => {
       state: "CA",
       country: "USA",
       capital: false,
-      population: 3900000,
+      population: 39000002,
       regions: ["west_coast", "socal"],
     });
     await citiesRef.doc("DC").set({
@@ -151,7 +151,7 @@ const runFunctions = async (db: FirebaseFirestore.Firestore) => {
       state: null,
       country: "USA",
       capital: true,
-      population: 680000,
+      population: 680002,
       regions: ["east_coast"],
     });
     await citiesRef.doc("TOK").set({
@@ -159,7 +159,7 @@ const runFunctions = async (db: FirebaseFirestore.Firestore) => {
       state: null,
       country: "Japan",
       capital: true,
-      population: 9000000,
+      population: 9000002,
       regions: ["kanto", "honshu"],
     });
     await citiesRef.doc("BJ").set({
@@ -167,7 +167,7 @@ const runFunctions = async (db: FirebaseFirestore.Firestore) => {
       state: null,
       country: "China",
       capital: true,
-      population: 21500000,
+      population: 21500002,
       regions: ["jingjinji", "hebei"],
     });
     await citiesRef.doc("SF").collection("landmarks").doc().set({
@@ -224,6 +224,20 @@ const runFunctions = async (db: FirebaseFirestore.Firestore) => {
   paginationQueries();
 };
 
+const delay = (ms) => new Promise(res => setTimeout(res, ms))
+
+const logData = (tag, snapshot, toLog) => {
+  console.log("\n*** " + tag);
+  if (snapshot.empty) {
+    console.log("\tempty");
+  } else {
+    snapshot.forEach((item) => console.log("\t", toLog(item)));
+  } 
+}
+
+export default runFunctions
+
+/*
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const logData = (
@@ -241,4 +255,6 @@ const logData = (
   }
 };
 
+
 export default runFunctions;
+*/
