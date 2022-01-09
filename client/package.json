@@ -2,9 +2,11 @@
   "name": "client",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.js",
+  "main": "lib/app.js",
   "scripts": {
-    "build": "FIRESTORE_EMULATOR_HOST=localhost:8080 GOOGLE_APPLICATION_CREDENTIALS='/home/runner/work/firebase/firebase-api/client/firebase-key.json' node src/app.js"
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "test": "npm run build && FIRESTORE_EMULATOR_HOST=localhost:8080 GOOGLE_APPLICATION_CREDENTIALS='/home/runner/work/firebase/firebase-api/client/firebase-key.json' node lib/app.js"
   },
   "engines": {
     "node": "16"
@@ -16,5 +18,5 @@
     "firebase": "^9.6.2",
     "firebase-admin": "^10.0.1"
   },
-  "type": "module"
+  "type": "commonjs"
 }

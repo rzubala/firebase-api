@@ -1,4 +1,4 @@
-const runFunctions = async (db) => {
+const runFunctions = async (db: FirebaseFirestore.Firestore) => {
   const simpleQueries = async () => {
     const citiesRef = db.collection("cities");
 
@@ -135,7 +135,7 @@ const runFunctions = async (db) => {
       state: "CA",
       country: "USA",
       capital: false,
-      population: 860002,
+      population: 860003,
       regions: ["west_coast", "norcal"],
     });
     await citiesRef.doc("LA").set({
@@ -224,6 +224,7 @@ const runFunctions = async (db) => {
   paginationQueries();
 };
 
+/*
 const delay = (ms) => new Promise(res => setTimeout(res, ms))
 
 const logData = (tag, snapshot, toLog) => {
@@ -236,8 +237,8 @@ const logData = (tag, snapshot, toLog) => {
 }
 
 export default runFunctions
+*/
 
-/*
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const logData = (
@@ -255,6 +256,4 @@ const logData = (
   }
 };
 
-
 export default runFunctions;
-*/
